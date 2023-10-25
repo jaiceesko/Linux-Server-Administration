@@ -1,0 +1,40 @@
+### ADMINISTERING NETWORKING
+
+
+# Checking your network from the command line
+
+ip addr show
+
+# statistics of packet transmission
+
+ip -s addr show
+
+
+# To reach systems that are in the network
+
+ping server1
+
+# Checking rounting information
+
+ip route show
+
+
+sudo apt install net-tools
+
+route
+
+# Track the route to a host
+
+sudo apt install inetutils-traceroute
+
+traceroute google.com
+
+
+# Viewing the host and domain names
+
+hostname
+
+dnsdomainname
+
+
+## Configuring Network Interfaces
