@@ -37,4 +37,16 @@ hostname
 dnsdomainname
 
 
-## Configuring Network Interfaces
+## Configuring Networking from the command line
+
+# Setting IP addresses manually
+
+sudo ip address add 10.0.2.15/24 dev enp0s3
+
+# set the default router
+
+sudo ip route add default via 192.168.1.254 dev enp0s3
+
+# make the network interface up
+
+sudo ip link set enp0s3 up
