@@ -1,0 +1,91 @@
+#### INSTALL AND CONFIGURE APACHE ON UBUNTU SERVER
+
+sudo apt update
+
+sudo apt upgrade
+
+sudo apt install apache2
+
+systemctl status apache2
+
+# if apache2 failed to start
+
+sudo systemctl enable apache2
+
+sudo systemctl start apache2
+
+# checking firewall and enable ports
+
+sudo ufw status
+
+# open ssh, https ports
+
+sudo ufw allow OpenSSH
+
+# List application services
+
+sudo ufw app list
+
+# open port 443
+
+sudo ufw allow 'Apache Secure'
+
+# enable the firewall
+
+sudo ufw enable
+
+# apache2 configuration
+
+sudo nano /etc/apache2/apache2.conf
+
+# the directory that apache serves web pages from is known as the document root
+
+# the default document root
+
+/var/www/html/index.html
+
+# create custom document root or website
+
+sudo mkdir /var/www/campaign1
+
+sudo mkdir /var/www/daxcomwebsite
+
+# view sites available
+
+ls -la /etc/apache2/sites-available
+
+# copy the conf file
+
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/campaign1.conf
+
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/daxcomwebsite.conf
+
+# edit both config files
+
+sudo nano campaign1.conf
+
+sudo nano daxcomwebsite.conf
+
+# change campaign1 and daxcomwebsite directory ownership
+
+sudo chown -R $USER:$USER /var/www/campaign1
+
+sudo chown -R $USER:$USER /var/www/daxcomwebsite
+
+# change directory permissions
+
+sudo chmod -R 755 /var/www
+
+# test apache
+
+sudo apache2ctl configtest
+
+# enable the site
+sudo a2ensite campaign1.conf
+
+sudo systemctl reload apache2
+
+sudo a2ensite daxcomwebsite.conf
+
+sudo systemctl reload apache2
+
