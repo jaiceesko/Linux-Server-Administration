@@ -1,0 +1,61 @@
+#### INSTALL AND CONFIGURE DHCP SERVER IN UBUNTU LINUX
+
+## Install dhcp
+
+sudo apt update
+
+sudo apt install isc-dhcp-server
+
+## backup the dhcp-server file
+
+sudo cp /etc/default/isc-dhcp-server /etc/default/isc-dhcp-server.bak
+
+## edit isc-dhcp-server configure files
+
+cd /etc/default
+
+sudo nano isc-dhcp-server
+
+INTERFACESv4="ensp21
+
+cd /etc/dhcp
+
+sudo cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bak
+
+sudo nano /etc/dhcp/dhcpd.conf
+
+# default configuration file
+
+/etc/dhcp/dhcpd.conf
+
+# create our own dhcpd.conf file
+
+sudo mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.orig
+
+sudo nano /etc/dhcp/dhcpd.conf
+
+# file sample edit
+
+default-lease-time 43200;
+max-lease-time 86400;
+option subnet-mask 255.255.255.0;
+option broadcast-address 192.168.1.255;
+option domain-name "local.lan";
+authoritative;
+subnet 192.168.1.0 netmask 255.255.255.0 {
+        range 192.168.1.100 192.168.1.240;
+        option routers 192.168.1.1;
+        option domain-name-servers 192.168.1.1;
+}
+
+
+# we declare an interface for it to listen for requests on.
+# edit the /etc/default/isc-dhcp-server file
+
+INTERFACESv4="enp0s3"
+
+# start the dhcp service
+
+sudo systemctl start isc-dhcp-server
+
+sudo systemctl enable isc-dhcp-server
