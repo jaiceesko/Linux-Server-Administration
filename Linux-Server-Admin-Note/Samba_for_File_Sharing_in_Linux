@@ -1,0 +1,33 @@
+#### SAMBA SETUP FOR FILE SHARING IN LINUX
+
+sudo apt update
+
+sudo apt install samba
+
+sudo systemctl enable smbd
+
+sudo systemctl start smbd
+
+cd /etc/samba
+
+sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+sudo  nano /etc/samba/smb.conf
+
+[global]
+	server role = standalone server
+	map to guest = Bad User
+	usershare allow guests = yes
+	hosts allow = 10.0.2.0/24
+	hosts deny = 0.0.0.0/0
+
+[testshare]
+	comment = test share
+	path = /home/server2/testfolder
+	read only = no
+	guest ok = yes
+	force create mode = 0755
+	force user = server2
+	force group = server2
+
+mkdir testfolder

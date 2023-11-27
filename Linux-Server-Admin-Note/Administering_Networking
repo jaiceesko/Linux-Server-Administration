@@ -1,0 +1,52 @@
+### ADMINISTERING NETWORKING
+
+
+# Checking your network from the command line
+
+ip addr show
+
+# statistics of packet transmission
+
+ip -s addr show
+
+
+# To reach systems that are in the network
+
+ping server1
+
+# Checking rounting information
+
+ip route show
+
+
+sudo apt install net-tools
+
+route
+
+# Track the route to a host
+
+sudo apt install inetutils-traceroute
+
+traceroute google.com
+
+
+# Viewing the host and domain names
+
+hostname
+
+dnsdomainname
+
+
+## Configuring Networking from the command line
+
+# Setting IP addresses manually
+
+sudo ip address add 10.0.2.15/24 dev enp0s3
+
+# set the default router
+
+sudo ip route add default via 192.168.1.254 dev enp0s3
+
+# make the network interface up
+
+sudo ip link set enp0s3 up

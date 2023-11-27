@@ -1,0 +1,101 @@
+### INSTALL AND CONFIGURE AN NFS LINUX SERVER AND CLIENT
+
+# Install NFS
+sudo apt update
+
+sudo apt install nfs-kernel-server
+
+# Configure NFS exports or NFS shares
+
+sudo mkdir /exports
+cd /exports
+sudo mkdir /exports/backup
+sudo mkdir /exports/documents
+
+# Configure the NFS Server
+systemctl status nfs-kernel-server
+sudo systemctl enable nfs-kernel-server
+sudo systemctl start nfs-ksernel-server
+
+# Examine the /etc/exports file
+sudo cat /etc/exports
+
+# Create a fresh /etc/exports file
+sudo mv /etc/exports /etc/exports.bak
+
+sudo nano /etc/exports
+# sample edited for /etc/exports
+/exports/backup 10.0.2.0/255.255.255.0(rw,no_subtree_check)
+/exports/documents 10.0.2.0/255.255.255.0(rw,no_subtree_check)
+
+
+# Restart the NFS server
+sudo systemctl restart nfs-kernel-server
+systemctl status nfs-kernel-server
+
+# Test the NFS server
+cd /exports
+sudo nano /exports/backup/test1.txt
+sudo nano /exports/documents/test2.txt
+
+# Configure and Install the NFS client
+
+sudo apt update
+sudo apt install nfs-common
+
+# connect to nfs server
+showmount --exports 10.0.2.15
+
+
+# Create Parent connectivity
+sudo mkdir /mnt/nfs
+
+sudo mkdir /mnt/nfs/backup
+sudo mkdir /mnt/nfs/documents
+
+# Mounting NFS exports
+
+sudo mount 10.0.2.15:/exports/backup /mnt/nfs/backup
+sudo mount 10.0.2.15:/exports/documents /mnt/nfs/documents
+
+# Unmounting NFS exports
+
+sudo umount /mnt/nfs/backup
+sudo umount /mnt/nfs/documents
+
+# How to auto-mount NFS exports
+
+cd /mnt/nfs
+# confirm if they are already unmount
+sudo df -h
+sudo rm -r backup documents
+
+sudo apt install autofs
+
+systemctl status autofs
+sudo systemctl enable autofs
+sudo systemctl start autofs
+
+# Configure autofs and config file demonstration
+
+sudo nano /etc/auto.master
+
+# add /mnt/nfs /etc/auto.nfs to auto.master
+/mnt/nfs /etc/auto.nfs --ghost --timeout=60
+
+sudo nano /etc/auto.nfs
+# edit the auto.nfs
+backup -fstype=nfs4,rw 10.0.2.15:/exports/backup
+documents -fstype=nfs4,rw 10.0.2.15:/exports/documents
+
+
+# Restart and check our configuration
+
+sudo systemctl restart autofs
+systemctl status autofs
+
+ls -l /mnt/nfs
+
+df -h
+# Verify mounts are actually unmounted
+ watch "mount | grep nfs"

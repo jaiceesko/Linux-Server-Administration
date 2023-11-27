@@ -1,0 +1,112 @@
+### SETTING UP NETWORK SERVICES
+
+# Setting up a DHCP and DNS servers.
+
+
+## Planning Your IP Adress Scheme
+
+# IP address assignment scheme for a small office
+
+Network: 192.168.1.0/24
+Network equipment: 192.168.1.1 - 192.168.1.10
+Servers: 192.168.1.11 - 192.168.1.99
+DHCP: 192.168.1.100 - 192.168.1.240
+Reservations: 192.168.1.241 - 192.168.1.254
+
+
+## Serving IP Address with isc-dhcp-server
+
+# Assign a static IP address to the server that serves DHCP.
+
+# Assigning static IP addresses
+
+/etc/netplan/00-installer-config.yaml
+
+## backup the file
+sudo cp /etc/netplan/00-installer-config.yaml /etc/netplan/00-installer-config.yaml.bak
+
+# 00-installer-config.yaml sample file for static IP assignment
+
+network:
+  ethernets:
+    enp0s3:
+      addresses: [192.168.100.50/24]
+      gateway4: 192.168.100.1
+      nameservers:
+        addresses: [192.168.100.1, 192.168.100.2]
+  version: 2
+
+# make changes take effect
+
+sudo netplan apply
+
+
+# Install isc-dhcp-server package.
+
+sudo apt install isc-dhcp-server
+
+# Check the status of the daemon after installing isc-dhcp-server
+
+systemctl status isc-dhcp-server
+
+# Configure the isc-dhcp-server if its failed to start
+
+sudo systemctl stop isc-dhcp-server
+
+sudo systemctl stop isc-dhcp-server6
+
+sudo systemctl disable isc-dhcp-server6
+
+# default configuration file
+
+/etc/dhcp/dhcpd.conf
+
+# create our own dhcpd.conf file
+
+sudo mv /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.orig
+
+sudo nano /etc/dhcp/dhcpd.conf
+
+# file sample edit
+
+default-lease-time 43200;
+max-lease-time 86400;
+option subnet-mask 255.255.255.0;
+option broadcast-address 192.168.1.255;
+option domain-name "local.lan";
+authoritative;
+subnet 192.168.1.0 netmask 255.255.255.0 {
+	range 192.168.1.100 192.168.1.240;
+	option routers 192.168.1.1;
+	option domain-name-servers 192.168.1.1;
+}
+
+
+# we declare an interface for it to listen for requests on.
+# edit the /etc/default/isc-dhcp-server file
+
+INTERFACESv4="enp0s3"
+
+# start the dhcp server
+
+sudo systemctl start isc-dhcp-server
+
+# check the status
+
+systemctl status isc-dhcp-server
+
+# when an IP lease is assigned to a client will be recorded in
+
+/var/lib/dhcp/dhcpd.leases 
+
+/var/log/syslog
+
+sudo tail -f /var/log/syslog
+
+
+
+
+## Setting Up DNS with bind
+
+# Domain Name System (DNS) is a service that's responsible for matching an IP address to a domain name or hostname.
+## Setting Up an internet gateway

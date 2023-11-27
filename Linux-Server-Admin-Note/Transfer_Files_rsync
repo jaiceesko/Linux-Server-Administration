@@ -1,0 +1,14 @@
+### Transferring Files with rsync
+
+cd /home/joe
+
+cp -r campaigndraft .
+
+# transfer campaigndraft folder to the network share server
+
+rsync -rv campaigndraft server1@172.10.15.50:
+
+sudo rysnc -av /var/log /mnt/backup
+
+sudo rysnc -av /var/log server1@172.10.15.50:/mnt/backup
+

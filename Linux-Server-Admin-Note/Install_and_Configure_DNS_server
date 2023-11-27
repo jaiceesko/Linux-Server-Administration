@@ -1,0 +1,26 @@
+#### INSTALL AND CONFIGURE DNS SERVER IN LINUX
+
+sudo apt update && sudo apt upgrade -y
+
+# Install and configure bind9
+
+sudo apt install -y bind9 bind9utils bind9-doc dnsutils
+
+# Configure bind9
+
+cd /etc/bind
+
+sudo cp named.conf.options ./named.conf.options.bak
+
+sudo nano /etc/bind/named.conf.options
+
+# sample of named.conf.options edited file
+
+
+# Configure DNS Forwarding
+
+# Define zone files
+
+# Create a forward lookup zone
+
+# Create a reverse lookup zone

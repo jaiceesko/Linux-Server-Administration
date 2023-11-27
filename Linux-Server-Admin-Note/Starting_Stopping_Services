@@ -1,0 +1,95 @@
+### STARTING AND STOPPING SERVICES
+
+# display system daemons or systemd init
+
+ps -e | head -n 5
+
+# Two primary systemd units are service units and target units.
+# A service unit is for managing daemons on your linux server.
+# A target unit is a group of other units.
+
+sudo systemctl list-units | grep .service
+
+sudo systemctl list-units | grep .target
+
+# systemd location
+
+/lib/systemd/system
+
+/etc/systemd/system
+
+# systemd units
+
+sudo systemctl list-unit-files --type=service
+
+# systemd targets
+
+sudo systemctl list-unit-files --type=target
+
+
+# shows the sshd daemon's unit configuration file
+
+sudo cat /lib/systemd/system/sshd.service
+
+
+# Checking the status of services
+
+## Checking services for SysVinit systems
+
+sudo chkconfig --list
+
+# service currently running
+
+sudo service --status-all | grep running... | sort
+
+## To check for individual service
+
+sudo chkconfig --list cups
+
+# To check for individual service running
+
+sudo service cups status
+
+
+# To see all services using systemd
+
+sudo systemctl list-unit-files --type=service | grep -v disabled
+
+
+# To see a particular service running
+
+sudo systemctl status sshd.service
+
+sudo service cups status
+
+
+# Starting and Stopping SysVinit services
+
+sudo service cups stop
+
+sudo service cups start
+
+
+# To restart a SysVinit service
+
+sudo service cups restart
+
+# Reloading a service
+
+sudo service cups reload
+
+# Managing Systemd units
+
+sudo systemctl stop sshd.service
+
+sudo systemctl start sshd.service
+
+sudo systemctl reload cups.service
+
+sudo systemctl enable cups.service
+
+sudo systemctl disable cups.service
+
+sudo systemctl status cups.service
+
+sudo systemctl restart cups.service

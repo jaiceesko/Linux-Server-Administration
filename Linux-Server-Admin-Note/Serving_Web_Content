@@ -1,0 +1,89 @@
+### Serving Web Content
+
+### Installing and Configuring Apache2
+
+# Apache is an application that runs on linux and unix servers to serve web pages to users.
+
+# Install apache2
+
+sudo apt update
+
+sudo apt install apache2 apache2-doc apache2-utils
+
+# Check status apache2
+
+systemctl status apache2
+
+# checking firewall and port 80, 443, ssh port 22
+sudo ufw status
+
+sudo ufw allow OpenSSH
+
+sudo ufw app list
+
+sudo ufw allow 'Apache Full'
+sudo ufw enable
+
+
+# Start and enable apache2 if not enable by default
+
+sudo systemctl enable apache2
+
+sudo systemctl start apache2
+
+# configuration file
+
+/etc/apache2
+
+sudo nano /etc/apache2/apache2.conf
+
+# the directory that apache serves web pages from is known as the document root
+
+/var/www/html/index.html
+
+
+## Installing additional Apache modules
+apt search libpache2-mod
+
+sudo apt install libapche2-mod-python
+
+sudo apt install libapache2-mod-perl
+
+# to enable modules
+
+a2enmod python
+
+# disable a module
+a2dismod perl
+
+# view default site available
+
+ls -la /etc/apache2/sites-available
+
+# to enable a site
+
+a2ensite 000-default
+
+# to disable a site
+
+a2dissite 000-default
+
+sudo systemctl reload apache2
+
+# create a custom site
+
+sudo nano /etc/apach2/sites-available/example.net.conf
+
+# create a directory for documentroot
+sudo mkdir -p /srv/www/example.net/public_html
+
+# create a directory to store the log files
+
+sudo mkdir /srv/www/example.net/logs
+
+# enable the site
+
+a2ensite example.net
+
+sudo systemctl reload apache2
+

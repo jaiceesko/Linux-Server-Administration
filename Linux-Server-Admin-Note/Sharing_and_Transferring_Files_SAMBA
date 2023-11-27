@@ -1,0 +1,101 @@
+#### SHARING AND TRANSFERRING FILES IN LINUX
+
+# A file server is one which can give your users a central place to store critical files.
+
+# With Ubuntu server, there are methods to transfer files from one node to another over a network.
+
+# Setting up a central file server using both Samba and NFS.
+
+# Transfer files between nodes with utilities such as scp and rsysnc.
+
+
+## File Server considerations
+
+
+
+## Sharing files with Windows users via Samba
+
+# create samba file share filesystem
+
+sudo mkdir -p /share/Documents
+
+sudo mkdir /share/Public
+
+# Install samba package
+
+sudo apt update
+
+sudo apt install samba
+
+# check if installation was successful
+whereis samba
+
+# When you install the samba package, you will have smbd daemon started and enabled automatically.
+
+# stop the smbd daemon before configuration
+
+sudo systemctl stop smbd
+
+# Backup the /etc/samba/smb.conf configuration file
+
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+# We going to split the samba configuration up between two files for cleaner and easier to read:
+
+# /etc/samba/smb.conf and /etc/samba/smbshared.conf
+
+# sample of edited /etc/samba/smb.conf file
+
+[global]
+server string = File Server
+workground = WORKGROUND
+security = user
+map to guest = Bad User
+name resolve order = host bcast wins
+include = /etc/samba/smbshared.conf
+
+
+# sample of edited /etc/samba/smbshared.conf file
+
+[Documents]
+path = /share/Documents
+force user = myuser
+force group = users
+public = yes
+writable = no
+
+[Public]
+path = /share/Public
+force user = myuser
+force group = users
+create mask = 0664
+force create mode = 0664
+directory mask = 0777
+force directory mode = 0777
+public = yes
+writable = yes
+
+# change /share directory ownership
+
+sudo chown -R server2:server2 /share
+
+# start and enable the smbd daemon
+
+sudo systemctl enable smbd
+
+sudo systemctl start smbd
+
+systemctl status smbd
+
+## Mount windows share on linux via cifs-utils
+
+sudo apt install cifs-utils -y
+
+# create a directory to mount windows share
+
+sudo mkdir /mnt/documents
+
+sudo mount -t cifs //server2/share/Documents -o username=myuser /mnt/documents
+
+
+
