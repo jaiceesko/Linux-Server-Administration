@@ -1,0 +1,54 @@
+### CREATING A MULTIPLE-PARTITION DISK
+
+# To start with a fresh USB drive with dd command to start with fresh master boot record.
+# Or to wipe the entire disk
+
+sudo dd if=/dev/zero of=dev/sdb bs=1M count=100
+
+## We creating six new partitions
+
+sudo fdisk /dev/sdb
+# n for partition type
+# p for primary partition
+# parition number 1
+# first sector we select default
+# last sector +5G
+
+## The default partition type is Linux. Use some of the partition for swap space (type 82), FAT32 (type x)
+# and Linux LVM (type 8e). to do that type t and indicate which partition type to use.
+# type L to see a list of partition types.
+
+# For swap space
+# type t
+# enter the partition number
+# type L to list codes and select the right one
+
+# Check that the kernel knows about the changes to the partition table.
+# Check the /proc/partitions for sdb.
+# If the new devices are not there, run the partprobe /dev/sdb command on the drive or reboot your computer.
+sudo cat /proc/partitions
+sudo grep sdb /proc/partitions
+
+sudo partprobe /dev/sdb
+
+sudo grep sdb /proc/partitions
+
+## List partitions and sturcture the partitions into filesystems or swap areas
+
+# make sdb1 into regular linux ext4 filesystem
+sudo mkfs -t ext4 /dev/sdb1
+
+# format sdb2 as a swap area
+sudo mkswap /dev/sdb2
+
+# make sdb3 the default filesystem type ext2
+sudo mkfs /dev/sdb3
+
+# for sdb5 make this into a vfat filesystem
+sudo mkfs -t vfat /dev/sdb5
+
+# to make sdb6 into LVM physical volume
+sudo pvcreate /dev/sdb6
+
+# To display disk filesystem
+sudo lsblk -fs
