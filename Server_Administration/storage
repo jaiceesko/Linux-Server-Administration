@@ -1,0 +1,90 @@
+### STORAGE DEVICES IN LINUX
+
+## ADDING A BASIC DISK TO LINUX
+
+# First run lsblk command to list the system's disks and identify the new drive
+
+sudo lsblk
+# for a usb device inserted, use lsusb command
+sudo lsusb
+# You can list model and serial numbers 
+sudo lsblk -o <model | serial>
+
+## PARTIONING HARD DISKS
+
+# VIEWING DISK PARTITIONS
+
+# To view disk partitions, use parted command with -l option
+
+sudo parted -l /dev/sda
+
+sudo fdisk -l /dev/sdb
+
+# Unmounting the existing disk first before starting partition
+
+sudo parted -l /dev/sdb
+
+sudo umount /media/ubuntu2024/SSS_X64FREE_EN-US_DV9
+
+sudo fdisk /dev/sdb
+
+# select d for deletion
+# select the partition number to delete
+# Confirm partition deletion by type p
+# save changes and quit
+
+## CREATING A SINGLE-PARTITION DISKO
+
+# We want to install partition table on the disk /dev/sdb
+
+# we can use choose one of this commands parted, gparted, fdisk command
+# Determine the device name for the USB drive.
+sudo lsusb
+sudo lsblk
+sudo journalctl -f
+
+# If the usb flash drive mounts automatically, unmount it.
+sudo mount | grep sdb
+
+sudo umount /dev/sdb1
+
+sudo parted /dev/sdb
+
+# Label or Relabel the disk as having gpt partition table
+mklabel gpt
+# Create a new partition
+mkpart
+# name partition
+alldisk
+
+# select start and end
+1 to 62.0GB
+# double check the drive is partitioned press
+p
+# partion is /dev/sdb1
+
+# We can now create a filesystem on /dev/sdb1 with mkfs command. the -L option
+# gives the filesystem a shorthand label.
+
+sudo mkfs -t xfs -L first_test /dev/sdb1
+
+# Next, create a mount point and mount the new filesystem
+
+sudo mkdir /mnt/test
+sudo mount LABEL=first_test /mnt/test
+
+# Check that the mount succeeded.
+sudo mount
+sudo mount | grep sdb
+sudo lsblk
+sudo df -h /mnt/test
+
+
+# To have the filesystem automatically mounted at boot time.
+# Edit the /etc/fstab file
+
+LABEL=spare	/mnt/test	xfs	error=remote-ro		0  0
+
+# Unmounting the drive with umount command
+sudo umount /dev/sdb1
+
