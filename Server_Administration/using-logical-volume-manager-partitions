@@ -1,0 +1,77 @@
+### USING LOGICAL VOLUME MANAGER PARTITIONS
+
+## With LVM, physical disk partitions are added to pools of space called Volume groups.
+
+### LVM abilities:
+# Add more space to a logical volume from the volume group while the volume is still in use.
+# Add more physical volumes to a volume group if the volume group begins to run out of space. The physical volumes can be from disks.
+# Move data from one physical volume to another so you can remove smaller disks and replace them with larger ones
+# While the filesystems are still in use again, without downtime.
+
+## LVM also supports advanced features, such as mirroring and working in clusters, snapshots.
+
+## Checking an Existing LVM
+sudo fdisk -l /dev/sda
+
+# Use the pvdisplay command to see if that partition is being used in LVM group
+
+sudo pvdisplay /dev/sda2
+
+# You wan to see information about the volume group
+sudo vgdisplay vg_sdb6
+
+## Creating LVM Logical Volumes
+# First create one or more physical volumes (pv).
+## Create volume groups (vg) from physical volumes.
+## Third, create logical volumes from the volume groups (lv).
+
+# Create a new physical volume
+sudo pvcreate /dev/sdb1
+# Add a physical volume to a new group, use vgcreate command.
+sudo vgcreate vg_lvm /dev/sdb6
+
+# To see the new volume group
+sudo vgdisplay vg_lvm
+
+# To create a logical volume from some of the space in that volume group
+
+sudo lvcreate -n lvm_home -L 2G vg_lvm
+
+# Check the logical volume exists
+
+sudo ls -la /dev/mapper/vg_lvm*
+
+# Create a filesystem
+mkfs -t ext4 /dev/mapper/vg_lvm-lvm_home
+
+# Make a directory
+sudo mkdir /mnt/home-lvm_home
+
+# Mounting the device
+sudo mount /dev/mapper/vg_lvm-lvm_home /mnt/home-lvm_home
+
+# Confirm the device being mounted.
+
+sudo df -h /mnt/home-lvm_home
+
+# Logical volumes can be mounted permanently by adding an entry to the /etc/fstab file
+/dev/mapper/vg_lvm-lvm_home  /mnt/home-lvm_home  ext4  defaults 1 2
+
+
+### Growing LVM Logical Volumes
+
+# If you run out of space on a logical volume, you can add space to it without even unmounting it.
+#You must have space available in the volume group, grow the logical volume, and grow the filesystem to fill it.
+
+sudo vgdisplay vg_lvm
+
+df -h /mnt/home-lvm_home
+
+# Expand the logical volume using the lvextend command:
+sudo lvextend -L +10G /dev/mapper/vg_lvm-lvm_home
+
+# Resize the filesystem to fit the new logical volume size:
+sudo resize2fs -p /dev/mapper/vg_lvm-lvm_home
+
+# Check to see that the filesystem is now resized to include the additional disk space:
+sudo df -h /mnt/home-lvm_home/
